@@ -1,6 +1,7 @@
 import os
 
 import neat
+import pickle
 import pygame
 
 from base import Base
@@ -12,10 +13,11 @@ pygame.font.init()
 WIN_WIDTH = 500
 WIN_HEIGHT = 800
 
+CLOCK_TICK = 3000
+
 GEN = 0
 MAX_SCORE = 0
 BEST_FITNESS = 0
-
 
 PIPE_DISTANCE = 650
 STAT_FONT = pygame.font.SysFont("comicsans", 25)
@@ -23,14 +25,14 @@ STAT_FONT = pygame.font.SysFont("comicsans", 25)
 BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bg.png")))
 
 
-def draw_window(win, birds, base, pipes, score,fitness):
+def draw_window(win, birds, base, pipes, score, fitness):
     win.blit(BG_IMG, (0, 0))
     global MAX_SCORE
     global GEN
     global BEST_FITNESS
 
-    MAX_SCORE = max(MAX_SCORE,score)
-    BEST_FITNESS = max(BEST_FITNESS,fitness)
+    MAX_SCORE = max(MAX_SCORE, score)
+    BEST_FITNESS = max(BEST_FITNESS, fitness)
 
     for pipe in pipes:
         pipe.draw(win)
@@ -52,12 +54,8 @@ def draw_window(win, birds, base, pipes, score,fitness):
     text = STAT_FONT.render("Alive: " + str(len(birds)), 1, (255, 255, 255))
     win.blit(text, (10, 55))
 
-    text = STAT_FONT.render("Curr fitness: " + str(round(fitness,3)), 1, (255, 255, 255))
+    text = STAT_FONT.render("Curr fitness: " + str(round(fitness, 3)), 1, (255, 255, 255))
     win.blit(text, (10, 95))
-
-
-
-
 
     for bird in birds:
         bird.draw(win)
@@ -67,6 +65,8 @@ def draw_window(win, birds, base, pipes, score,fitness):
 
 def fitness(genomes, config):
     global GEN
+    global CLOCK_TICK
+
     GEN += 1
     nets = []
     ge = []
@@ -89,7 +89,7 @@ def fitness(genomes, config):
 
     run = True
     while run:
-        clock.tick(30)
+        clock.tick(CLOCK_TICK)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -152,28 +152,41 @@ def fitness(genomes, config):
                 nets.pop(x)
                 ge.pop(x)
 
-        fitness = max([round(g.fitness,3) for g in ge]) if len(ge) > 0 else fitness
+        fitness = max([round(g.fitness, 3) for g in ge]) if len(ge) > 0 else fitness
 
-        draw_window(win, birds, base, pipes, score,fitness)
+        draw_window(win, birds, base, pipes, score, fitness)
         base.move()
 
 
-def run(config_path):
+def run(config_path, load_winner=False):
     config = neat.config.Config(neat.DefaultGenome, neat.DefaultReproduction,
                                 neat.DefaultSpeciesSet, neat.DefaultStagnation,
                                 config_path)
 
-    p = neat.Population(config)
+    if load_winner:
+        # Load the winner from the pickle file
+        with open('winner.pickle', 'rb') as file:
+            winner = pickle.load(file)
+        fitness([(1, winner)], config)
 
-    p.add_reporter(neat.StdOutReporter(True))
-    stats = neat.StatisticsReporter()
-    p.add_reporter(stats)
+    else:
+        p = neat.Population(config)
 
-    winner = p.run(fitness, 50)
+        p.add_reporter(neat.StdOutReporter(True))
+        stats = neat.StatisticsReporter()
+        p.add_reporter(stats)
 
+        winner = p.run(fitness, None)
+
+        with open('winner.pickle', 'wb') as file:
+            pickle.dump(winner, file)
+
+
+# load_winner variable is responsible for loading the winner from the pickle file
+# and adding it to the population of the neat algorithm
 
 if __name__ == "__main__":
     local_dir = os.path.dirname(__file__)
     config_path = os.path.join(local_dir, "neat-config")
 
-    run(config_path)
+    run(config_path, load_winner=True)
