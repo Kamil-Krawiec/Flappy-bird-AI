@@ -12,20 +12,53 @@ pygame.font.init()
 WIN_WIDTH = 500
 WIN_HEIGHT = 800
 
+GEN = 0
+MAX_SCORE = 0
+BEST_FITNESS = 0
+
+
 PIPE_DISTANCE = 650
-STAT_FONT = pygame.font.SysFont("comicsans", 50)
+STAT_FONT = pygame.font.SysFont("comicsans", 25)
 
 BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bg.png")))
 
 
-def draw_window(win, birds, base, pipes, score):
+def draw_window(win, birds, base, pipes, score,fitness):
     win.blit(BG_IMG, (0, 0))
+    global MAX_SCORE
+    global GEN
+    global BEST_FITNESS
+
+    MAX_SCORE = max(MAX_SCORE,score)
+    BEST_FITNESS = max(BEST_FITNESS,fitness)
 
     for pipe in pipes:
         pipe.draw(win)
 
+    # RIGHT TOP
     text = STAT_FONT.render("Score: " + str(score), 1, (255, 255, 255))
     win.blit(text, (WIN_WIDTH - 10 - text.get_width(), 10))
+
+    text = STAT_FONT.render("Max Score: " + str(MAX_SCORE), 1, (255, 255, 255))
+    win.blit(text, (WIN_WIDTH - 10 - text.get_width(), 55))
+
+    text = STAT_FONT.render("Max fitness: " + str(BEST_FITNESS), 1, (255, 255, 255))
+    win.blit(text, (WIN_WIDTH - 10 - text.get_width(), 95))
+
+    # LEFT TOP
+    text = STAT_FONT.render("Gen: " + str(GEN), 1, (255, 255, 255))
+    win.blit(text, (10, 10))
+
+    text = STAT_FONT.render("Alive: " + str(len(birds)), 1, (255, 255, 255))
+    win.blit(text, (10, 55))
+
+    text = STAT_FONT.render("Curr fitness: " + str(round(fitness,3)), 1, (255, 255, 255))
+    win.blit(text, (10, 95))
+
+
+
+
+
     for bird in birds:
         bird.draw(win)
     base.draw(win)
@@ -33,6 +66,8 @@ def draw_window(win, birds, base, pipes, score):
 
 
 def fitness(genomes, config):
+    global GEN
+    GEN += 1
     nets = []
     ge = []
     birds = []
@@ -117,7 +152,9 @@ def fitness(genomes, config):
                 nets.pop(x)
                 ge.pop(x)
 
-        draw_window(win, birds, base, pipes, score)
+        fitness = max([round(g.fitness,3) for g in ge]) if len(ge) > 0 else fitness
+
+        draw_window(win, birds, base, pipes, score,fitness)
         base.move()
 
 
