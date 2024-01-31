@@ -4,9 +4,9 @@ import neat
 import pickle
 import pygame
 
-from base import Base
-from bird import Bird
-from pipe import Pipe
+from Objects.base import Base
+from Objects.bird import Bird
+from Objects.pipe import Pipe
 
 pygame.font.init()
 
@@ -22,7 +22,7 @@ BEST_FITNESS = 0
 PIPE_DISTANCE = 650
 STAT_FONT = pygame.font.SysFont("comicsans", 25)
 
-BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bg.png")))
+BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("../imgs", "bg.png")))
 
 
 def draw_window(win, birds, base, pipes, score, fitness):
@@ -165,7 +165,7 @@ def run(config_path, load_winner=False):
 
     if load_winner:
         # Load the winner from the pickle file
-        with open('winner.pickle', 'rb') as file:
+        with open('../winner.pickle', 'rb') as file:
             winner = pickle.load(file)
         fitness([(1, winner)], config)
 
@@ -178,7 +178,7 @@ def run(config_path, load_winner=False):
 
         winner = p.run(fitness, None)
 
-        with open('winner.pickle', 'wb') as file:
+        with open('../winner.pickle', 'wb') as file:
             pickle.dump(winner, file)
 
 
@@ -187,6 +187,6 @@ def run(config_path, load_winner=False):
 
 if __name__ == "__main__":
     local_dir = os.path.dirname(__file__)
-    config_path = os.path.join(local_dir, "neat-config")
+    config_path = os.path.join(local_dir, "../neat-config")
 
-    run(config_path, load_winner=True)
+    run(config_path, load_winner=False)

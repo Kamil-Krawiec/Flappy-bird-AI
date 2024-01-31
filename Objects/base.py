@@ -1,6 +1,6 @@
 import pygame
 import os
-BASE_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "base.png")))
+BASE_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("./imgs", "base.png")))
 
 
 class Base:
