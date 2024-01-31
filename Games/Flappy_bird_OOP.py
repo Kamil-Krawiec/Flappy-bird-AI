@@ -99,7 +99,7 @@ class FlappyBirdGame:
             bird.draw(win)
 
         base.draw(win)
-        pygame.display.update()
+        # pygame.display.update()
 
     def draw_stats(self, win, score, fitness):
         # RIGHT TOP

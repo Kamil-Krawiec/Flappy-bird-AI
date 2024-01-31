@@ -53,6 +53,7 @@ def read_neat_config(config_file_path):
     # Extracting relevant parameters
     neat_config = {
         "Population Size": config.getint('NEAT', 'pop_size'),
+        "Fitness Threshold": config.getfloat('NEAT', 'fitness_threshold'),
         "Activation Functions": config.get('DefaultGenome', 'activation_options'),
         "Compatibility Disjoint Coefficient": config.getfloat('DefaultGenome', 'compatibility_disjoint_coefficient'),
         "Connection Add Probability": config.getfloat('DefaultGenome', 'conn_add_prob'),
