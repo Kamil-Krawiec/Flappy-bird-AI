@@ -8,6 +8,8 @@ from Objects.base import Base
 from Objects.bird import Bird
 from Objects.pipe import Pipe
 from .config import const
+import pandas as pd
+from .functions import *
 
 pygame.font.init()
 
@@ -16,22 +18,26 @@ WIN_HEIGHT = const['WIN_HEIGHT']
 CLOCK_TICK = const['CLOCK_TICK']
 PIPE_DISTANCE = const['PIPE_DISTANCE']
 FONT = const['FONT']
+FITNESS_THRESHOLD = const['FITNESS_THRESHOLD']
+GENERATIONS = const['GENERATIONS']
 
 BG_IMG_PATH = os.path.join("./imgs", "bg.png")
 
 STAT_FONT = pygame.font.SysFont(FONT, 25)
 
 
-def handle_events():
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            quit()
-
-
 class FlappyBirdGame:
     def __init__(self):
 
+        self.pipes = None
+        self.birds = None
+        self.nets = None
+        self.ge = None
+        self.stats = {
+            "Generation": [],
+            "Max Score": [],
+            "Max Fitness": [],
+        }
         self.gen = 0
         self.max_score = 0
         self.best_fitness = 0
@@ -140,7 +146,7 @@ class FlappyBirdGame:
 
         while run and self.birds:
             clock.tick(CLOCK_TICK)
-            handle_events()
+            self.handle_events()
 
             pipe_ind = 0
 
@@ -148,7 +154,6 @@ class FlappyBirdGame:
                 if len(self.pipes) > 1 and self.birds[0].x > self.pipes[0].x + self.pipes[0].PIPE_TOP.get_width():
                     pipe_ind = 1
             else:
-                run = False
                 break
 
             self.update_birds(pipe_ind)
@@ -157,8 +162,15 @@ class FlappyBirdGame:
 
             fitness = max([round(g.fitness, 3) for g in self.ge]) if self.ge else 0
 
+            if not run or any(genome.fitness >= FITNESS_THRESHOLD for genome in self.ge):
+                break
+
             self.draw_window(win, base, score, fitness)
             base.move()
+
+        self.stats["Generation"].append(self.gen)
+        self.stats["Max Score"].append(self.max_score)
+        self.stats["Max Fitness"].append(self.best_fitness)
 
     def update_offscreen_birds(self):
         for x, bird in enumerate(self.birds):
@@ -179,10 +191,16 @@ class FlappyBirdGame:
             self.fitness_function([(1, winner)], config)
         else:
             p = neat.Population(config)
-            p.add_reporter(neat.StdOutReporter(True))
-            stats = neat.StatisticsReporter()
-            p.add_reporter(stats)
-            winner = p.run(self.fitness_function, None)
+            winner = p.run(self.fitness_function, GENERATIONS)
 
             with open('../winner.pickle', 'wb') as file:
                 pickle.dump(winner, file)
+
+        save_stats(self.stats)
+
+    @staticmethod
+    def handle_events():
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
