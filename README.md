@@ -46,7 +46,12 @@ These inputs are processed by the neural network to output the decision of wheth
 I did some random games for different parameters and saved the results in a csv file. Then I analyzed the dataset to understand the relationships between various parameters and the Max Fitness value achieved in Flappy Bird games.
 ![correlation matrix](./charts/1.png)
 
-As we can see from the correlation matrix, the Max Fitness value is positively correlated with the Max Score and Population Size. It is negatively correlated with the Node Delete Probability and Node Add Probability, with the population size and activation function. 
+As we can see from the correlation matrix, the Max Fitness value is correlated with the Max Score and Population Size. It is also correlated with the Node Delete Probability and Node Add Probability, with the population size and activation function. 
+
+!Correlation refers to the statistical relationship between two variables, where positive correlation indicates that as one variable increases, the other also tends to increase, while negative correlation suggests that as one variable increases, the other tends to decrease.
+
+So as we can se some bigger positive or negative correlation values, we can say that these parameters are more important for the Max Fitness value.
+
 Let's have a deep dive into the relationships between these parameters.
 
 ### Dataset Description
