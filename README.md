@@ -40,27 +40,28 @@ These inputs are processed by the neural network to output the decision of wheth
 - The `bird.vel` input is crucial for understanding the bird's current motion.
 - The horizontal distance to the next pipe (`bird.x - pipe.x`) helps the AI predict when to jump to clear the pipe.
 
-By providing these specific inputs, the NEAT algorithm can evolve neural networks that effectively play Flappy Bird over successive generations.
+
+## Flappy Bird Game Analysis
+
+I did some random games for different parameters and saved the results in a csv file. Then I analyzed the dataset to understand the relationships between various parameters and the Max Fitness value achieved in Flappy Bird games.
+![correlation matrix](./charts/1.png)
+
+As we can see from the correlation matrix, the Max Fitness value is positively correlated with the Max Score and Population Size. It is negatively correlated with the Node Delete Probability and Node Add Probability, with the population size and activation function. 
+Let's have a deep dive into the relationships between these parameters.
+
+### Dataset Description
+In this analysis, we examine the relationships between various parameters and the Max Fitness value achieved in Flappy Bird games. 
+
+The dataset contains the following attributes:
+
+1. **Game_Index**: Index of the game.
+2. **Generation**: Generation of the game.
+3. **Max_Score**: Maximum score achieved in the game.
+4. **Max_Fitness**: Maximum fitness achieved in the game.
+5. **Population_Size**: Size of the population.
+6. **Hidden_Layers**: Number of hidden layers.
+7. **Activation** Function: Activation function used.
+8. **Node_Delete_Probability**: Probability of deleting a node.
+9. **Node_Add_Probability**: Probability of adding a node.
 
 
-# Analysis
-
-In this project, the NEAT (NeuroEvolution of Augmenting Topologies) algorithm is configured with several parameters to optimize the neural network that controls the bird's movements. The following statistics and configuration parameters are tracked and adjusted during the simulation:
-
-- **Game Index**: Identifier for the game instance.
-- **Generation**: The current generation number in the evolutionary algorithm.
-- **Max Score**: The highest score achieved by any bird in the current generation.
-- **Max Fitness**: The highest fitness value achieved by any bird in the current generation.
-- **Population Size**: The total number of individual birds (networks) in the current population.
-- **Fitness Threshold**: The predetermined fitness score at which the simulation is considered to have found a solution.
-- **Activation Functions**: Specifies the type of activation function used in the neural network (e.g., sigmoid, tanh).
-- **Compatibility Disjoint Coefficient**: A coefficient that measures species diversity within the population, influencing speciation.
-- **Connection Add Probability**: The likelihood of a mutation that adds a new connection between nodes.
-- **Connection Delete Probability**: The likelihood of a mutation that deletes an existing connection.
-- **Node Add Probability**: The probability of a mutation that adds a new node to the network.
-- **Node Delete Probability**: The probability of a mutation that deletes an existing node from the network.
-- **Weight Mutate Rate**: The frequency at which the weights of connections are mutated.
-- **Weight Mutate Power**: The magnitude of change applied to weights during mutation.
-- **Max Stagnation**: The number of generations a species is allowed to exist without improvement before it's considered stagnant and removed.
-
-These parameters are critical for the evolution and optimization of the neural networks that learn to play Flappy Bird. They are adjusted to ensure a balance between exploration of new neural structures and the exploitation of existing, well-performing structures.

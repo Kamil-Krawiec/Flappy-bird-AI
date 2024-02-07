@@ -53,16 +53,10 @@ def read_neat_config(config_file_path):
     # Extracting relevant parameters
     neat_config = {
         "Population Size": config.getint('NEAT', 'pop_size'),
-        "Fitness Threshold": config.getfloat('NEAT', 'fitness_threshold'),
-        "Activation Functions": config.get('DefaultGenome', 'activation_options'),
-        "Compatibility Disjoint Coefficient": config.getfloat('DefaultGenome', 'compatibility_disjoint_coefficient'),
-        "Connection Add Probability": config.getfloat('DefaultGenome', 'conn_add_prob'),
-        "Connection Delete Probability": config.getfloat('DefaultGenome', 'conn_delete_prob'),
-        "Node Add Probability": config.getfloat('DefaultGenome', 'node_add_prob'),
-        "Node Delete Probability": config.getfloat('DefaultGenome', 'node_delete_prob'),
-        "Weight Mutate Rate": config.getfloat('DefaultGenome', 'weight_mutate_rate'),
-        "Weight Mutate Power": config.getfloat('DefaultGenome', 'weight_mutate_power'),
-        "Max Stagnation": config.getint('DefaultStagnation', 'max_stagnation'),
+        "Hidden layers": config.getint('DefaultGenome', 'num_hidden'),
+        "Activation Function": config.get('DefaultGenome', 'activation_default'),
+        "Node delete probability": config.getfloat('DefaultGenome', 'node_delete_prob'),
+        "Node add probability": config.getfloat('DefaultGenome', 'node_add_prob'),
     }
 
     return neat_config
